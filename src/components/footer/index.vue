@@ -9,6 +9,10 @@
           <img src="@/assets/CityHall.png" alt>
           <p>喵眼城市</p>
       </router-link>
+      <router-link tag="li" to="/member">
+        <img src="@/assets/message.png" alt>
+        <p>会员中心</p>
+      </router-link>
       <router-link tag="li" to="/person">
         <img src="@/assets/personal.png" alt>
         <p>个人中心</p>
@@ -39,7 +43,7 @@ export default {
   }
   ul li {
     float: left;
-    width: 33.3333%;
+    width: 25%;
     height: 60px;
     display: flex;
     flex-direction: column;

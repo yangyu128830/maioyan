@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import movieRouter from '../routers/movie'
 import cityRouter from '../routers/city'
 import personRouter from '../routers/person'
+import memberRouter from '../routers/member'
 Vue.use(Router)
 
 export default new Router({
@@ -16,6 +17,7 @@ export default new Router({
     },
    movieRouter,
    cityRouter,
-   personRouter
+   personRouter,
+   memberRouter
   ]
 })
