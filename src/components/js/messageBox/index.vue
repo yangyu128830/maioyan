@@ -4,7 +4,7 @@
     <h2>{{ title }}</h2>
     <p>{{ content }}</p>
     <div class="info">
-      <div class="cancel" @touchstart="handleCancel">{{ cancel }}</div>
+      <div v-if="cancel" class="cancel" @touchstart="handleCancel">{{ cancel }}</div>
       <div @touchstart="handleOk">{{ ok }}</div>
     </div>
   </div>
@@ -12,7 +12,25 @@
 
 <script>
 export default {
-    name:"messageBox"
+    name:"messageBox",
+    props: {
+        title: {
+            type: String,
+            default: '提示'
+        },
+        content: {
+            type: String,
+            default: ''
+        },
+        cancel: {
+            type: String,
+            default: '取消'
+        },
+        ok: {
+            type: String,
+            default: '确定'
+        }
+    }
 };
 </script>
 

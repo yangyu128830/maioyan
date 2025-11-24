@@ -84,6 +84,12 @@ export default {
           // 数据处理成功之后，将isLoading 变成false
           this.isLoading = false;
         }
+      }).catch(error => {
+        // eslint-disable-next-line no-console
+        console.error('获取城市列表失败:', error);
+        this.isLoading = false;
+        // 可以在这里添加错误提示给用户
+        this.$messageBox('提示', '获取城市列表失败，请稍后重试');
       });
     }
   },
