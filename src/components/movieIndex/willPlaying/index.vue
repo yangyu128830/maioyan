@@ -53,6 +53,12 @@ export default {
         // 将当前id 复制给 优化id
         this.cityId = cityId;
       }
+    }).catch(error => {
+      // eslint-disable-next-line no-console
+      console.error('获取即将上映电影列表失败:', error);
+      this.isLoading = false;
+      // 可以在这里添加错误提示给用户
+      this.$messageBox('提示', '获取电影列表失败，请稍后重试');
     });
   }
 };

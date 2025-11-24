@@ -72,13 +72,18 @@ export default {
         if (res.status === 200) {
           this.movieList = res.data.data.detailMovie;
           this.$nextTick(() => {
-            new BScroll(this.$refs.detail_player, {
+            new BScroll(this.$refs.detail_player, { 
               scrollX: true,
               probeType: 1
             });
           });
         }
-      });
+      }).catch(error => {
+      // eslint-disable-next-line no-console
+      console.error('获取电影详情失败:', error);
+      // 可以在这里添加错误提示给用户
+      this.$messageBox('提示', '获取电影详情失败，请稍后重试');
+    });
   },
   methods: {
     handleTOBack() {

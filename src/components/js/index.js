@@ -6,8 +6,8 @@ export var messageBox = (function () {
     var defaults = {   //默认值
         title: '',
         content: '',
-        cancel: '',
-        ok: '',
+        cancel: '取消',
+        ok: '确定',
         handleCancel: null,
         handleOk: null
     };

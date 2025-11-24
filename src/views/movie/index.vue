@@ -67,6 +67,11 @@ export default {
           });
         }, 1000);
       }
+    }).catch(error => {
+      // eslint-disable-next-line no-console
+      console.error('获取城市定位失败:', error);
+      // 可以在这里添加错误提示给用户
+      messageBox('提示', '获取城市定位失败，请稍后重试');
     });
   }
 };

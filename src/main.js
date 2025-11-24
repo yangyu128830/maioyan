@@ -29,6 +29,10 @@ Vue.component('scroller',scroller)
 import loading from '@/components/loading'
 Vue.component('loading',loading)
 
+// 注册一个全局的messageBox组件
+import { messageBox } from '@/components/js'
+Vue.prototype.$messageBox = messageBox
+
 new Vue({
   router,
   store,
