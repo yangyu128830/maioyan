@@ -4,8 +4,8 @@
     <h2>{{ title }}</h2>
     <p>{{ content }}</p>
     <div class="info">
-      <div v-if="cancel" class="cancel" @touchstart="handleCancel">{{ cancel }}</div>
-      <div @touchstart="handleOk">{{ ok }}</div>
+      <div v-if="cancel" class="cancel" @click="handleCancel">{{ cancel }}</div>
+      <div @click="handleOk">{{ ok }}</div>
     </div>
   </div>
 </template>
