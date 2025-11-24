@@ -71,7 +71,11 @@ export default {
       // eslint-disable-next-line no-console
       console.error('获取城市定位失败:', error);
       // 可以在这里添加错误提示给用户
-      messageBox('提示', '获取城市定位失败，请稍后重试');
+      messageBox({
+        title: '提示',
+        content: '获取城市定位失败，请稍后重试',
+        cancel: null
+      });
     });
   }
 };
