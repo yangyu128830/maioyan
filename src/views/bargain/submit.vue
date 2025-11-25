@@ -1,51 +1,60 @@
 <template>
-  <div class="bargain-submit">
-    <div class="submit-header">
-      <h1>发布爆料</h1>
+  <div id="bargain-submit">
+    <Header title="发布爆料">
+      <i class="back" @touchstart="handleBack" @click="handleBack"></i>
+    </Header>
+    <div class="content">
+      <div class="submit-form">
+        <div class="form-group">
+          <label for="product-name">商品名称</label>
+          <input type="text" id="product-name" v-model="productName" placeholder="请输入商品名称">
+        </div>
+
+        <div class="form-group">
+          <label for="product-price">商品价格</label>
+          <input type="number" id="product-price" v-model="productPrice" placeholder="请输入商品价格">
+        </div>
+
+        <div class="form-group">
+          <label for="original-price">原价</label>
+          <input type="number" id="original-price" v-model="originalPrice" placeholder="请输入商品原价">
+        </div>
+
+        <div class="form-group">
+          <label for="product-image">商品图片</label>
+          <input type="file" id="product-image" @change="onImageChange">
+          <img :src="imagePreview" alt="商品图片预览" v-if="imagePreview" class="image-preview">
+        </div>
+
+        <div class="form-group">
+          <label for="product-description">商品描述</label>
+          <textarea id="product-description" v-model="productDescription" placeholder="请输入商品描述" rows="5"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="product-url">商品链接</label>
+          <input type="url" id="product-url" v-model="productUrl" placeholder="请输入商品购买链接">
+        </div>
+
+        <button class="submit-btn" @click="submitDeal" :disabled="isSubmitting">
+          {{ isSubmitting ? '发布中...' : '发布爆料' }}
+        </button>
+      </div>
     </div>
-
-    <div class="submit-form">
-      <div class="form-group">
-        <label for="product-name">商品名称</label>
-        <input type="text" id="product-name" v-model="productName" placeholder="请输入商品名称">
-      </div>
-
-      <div class="form-group">
-        <label for="product-price">商品价格</label>
-        <input type="number" id="product-price" v-model="productPrice" placeholder="请输入商品价格">
-      </div>
-
-      <div class="form-group">
-        <label for="original-price">原价</label>
-        <input type="number" id="original-price" v-model="originalPrice" placeholder="请输入商品原价">
-      </div>
-
-      <div class="form-group">
-        <label for="product-image">商品图片</label>
-        <input type="file" id="product-image" @change="onImageChange">
-        <img :src="imagePreview" alt="商品图片预览" v-if="imagePreview" class="image-preview">
-      </div>
-
-      <div class="form-group">
-        <label for="product-description">商品描述</label>
-        <textarea id="product-description" v-model="productDescription" placeholder="请输入商品描述" rows="5"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="product-url">商品链接</label>
-        <input type="url" id="product-url" v-model="productUrl" placeholder="请输入商品购买链接">
-      </div>
-
-      <button class="submit-btn" @click="submitDeal" :disabled="isSubmitting">
-        {{ isSubmitting ? '发布中...' : '发布爆料' }}
-      </button>
-    </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+
 export default {
   name: 'BargainSubmit',
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       productName: '',
@@ -59,6 +68,9 @@ export default {
     }
   },
   methods: {
+    handleBack() {
+      this.$router.go(-1);
+    },
     onImageChange(e) {
       const file = e.target.files[0];
       if (file) {
@@ -89,78 +101,67 @@ export default {
 }
 </script>
 
-<style scoped>
-.bargain-submit {
-  padding-bottom: 60px;
-}
+<style lang="scss" scoped>
+#bargain-submit {
+  .content {
+    padding-top: 40px;
+    padding-bottom: 60px;
 
-.submit-header {
-  padding: 15px;
-  background-color: #fff;
-  border-bottom: 1px solid #f0f0f0;
-  margin-bottom: 15px;
-}
+    .submit-form {
+      padding: 0 15px;
 
-.submit-header h1 {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin: 0;
-}
+      .form-group {
+        margin-bottom: 15px;
 
-.submit-form {
-  padding: 0 15px;
-}
+        label {
+          display: block;
+          font-size: 14px;
+          font-weight: bold;
+          color: #333;
+          margin-bottom: 5px;
+        }
 
-.form-group {
-  margin-bottom: 15px;
-}
+        input,
+        textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-size: 14px;
+          box-sizing: border-box;
+        }
 
-.form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-}
+        textarea {
+          resize: vertical;
+        }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
+        .image-preview {
+          width: 100px;
+          height: 100px;
+          object-fit: cover;
+          margin-top: 10px;
+          border-radius: 8px;
+        }
+      }
 
-.form-group textarea {
-  resize: vertical;
-}
+      .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff6b6b;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 20px;
 
-.image-preview {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-top: 10px;
-  border-radius: 8px;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #ff6b6b;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.submit-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
 }
 </style>

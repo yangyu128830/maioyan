@@ -1,75 +1,86 @@
 <template>
-  <div class="bargain-container">
-    <!-- 搜索框 -->
-    <div class="search-bar">
-      <input type="text" placeholder="搜索特价商品" v-model="searchKeyword" @input="onSearch">
-      <i class="iconfont icon-search"></i>
-    </div>
-
-    <!-- 天天低价商品框 -->
-    <div class="daily-deals">
-      <div class="daily-deals-header">
-        <h2>天天低价</h2>
-        <button class="view-all" @click="viewAllDeals">查看全部</button>
+  <div id="bargain">
+    <Header title="特价"/>
+    <div class="content">
+      <!-- 搜索框 -->
+      <div class="search-bar">
+        <input type="text" placeholder="搜索特价商品" v-model="searchKeyword" @input="onSearch">
+        <i class="iconfont icon-search"></i>
       </div>
-      <div class="daily-deals-list">
-        <div class="deal-item" v-for="item in dailyDeals" :key="item.id" @click="goToDetail(item.id)">
-          <img :src="item.image" :alt="item.name">
-          <div class="deal-info">
-            <h3>{{ item.name }}</h3>
-            <p class="price">¥{{ item.price }}</p>
-            <p class="original-price">¥{{ item.originalPrice }}</p>
+
+      <!-- 天天低价商品框 -->
+      <div class="daily-deals">
+        <div class="daily-deals-header">
+          <h2>天天低价</h2>
+          <button class="view-all" @click="viewAllDeals">查看全部</button>
+        </div>
+        <div class="daily-deals-list">
+          <div class="deal-item" v-for="item in dailyDeals" :key="item.id" @click="goToDetail(item.id)">
+            <img :src="item.image" :alt="item.name">
+            <div class="deal-info">
+              <h3>{{ item.name }}</h3>
+              <p class="price">¥{{ item.price }}</p>
+              <p class="original-price">¥{{ item.originalPrice }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 分类表 -->
-    <div class="category-tabs">
-      <div class="category-tab" v-for="category in categories" :key="category.id" :class="{ active: currentCategory === category.id }" @click="switchCategory(category.id)">
-        {{ category.name }}
-      </div>
-    </div>
-
-    <!-- 商品列表 -->
-    <div class="product-list">
-      <div class="product-item" v-for="product in filteredProducts" :key="product.id" @click="goToDetail(product.id)">
-        <img :src="product.image" :alt="product.name">
-        <div class="product-info">
-          <h3>{{ product.name }}</h3>
-          <p class="price">¥{{ product.price }}</p>
-          <p class="original-price">¥{{ product.originalPrice }}</p>
-          <p class="sales">已售{{ product.sales }}件</p>
+      <!-- 分类表 -->
+      <div class="category-tabs">
+        <div class="category-tab" v-for="category in categories" :key="category.id" :class="{ active: currentCategory === category.id }" @click="switchCategory(category.id)">
+          {{ category.name }}
         </div>
       </div>
-    </div>
 
-    <!-- 我的爆料板块 -->
-    <div class="my-submissions">
-      <div class="my-submissions-header">
-        <h2>我的爆料</h2>
-        <button class="submit-deal" @click="goToSubmit">发布爆料</button>
-      </div>
-      <div class="submissions-list" v-if="mySubmissions.length > 0">
-        <div class="submission-item" v-for="item in mySubmissions" :key="item.id">
-          <img :src="item.image" :alt="item.name">
-          <div class="submission-info">
-            <h3>{{ item.name }}</h3>
-            <p class="price">¥{{ item.price }}</p>
-            <p class="status">{{ item.status }}</p>
+      <!-- 商品列表 -->
+      <div class="product-list">
+        <div class="product-item" v-for="product in filteredProducts" :key="product.id" @click="goToDetail(product.id)">
+          <img :src="product.image" :alt="product.name">
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="price">¥{{ product.price }}</p>
+            <p class="original-price">¥{{ product.originalPrice }}</p>
+            <p class="sales">已售{{ product.sales }}件</p>
           </div>
         </div>
       </div>
-      <div class="empty-submissions" v-else>
-        <p>您还没有发布过爆料，快来分享您发现的低价商品吧！</p>
+
+      <!-- 我的爆料板块 -->
+      <div class="my-submissions">
+        <div class="my-submissions-header">
+          <h2>我的爆料</h2>
+          <button class="submit-deal" @click="goToSubmit">发布爆料</button>
+        </div>
+        <div class="submissions-list" v-if="mySubmissions.length > 0">
+          <div class="submission-item" v-for="item in mySubmissions" :key="item.id">
+            <img :src="item.image" :alt="item.name">
+            <div class="submission-info">
+              <h3>{{ item.name }}</h3>
+              <p class="price">¥{{ item.price }}</p>
+              <p class="status">{{ item.status }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="empty-submissions" v-else>
+          <p>您还没有发布过爆料，快来分享您发现的低价商品吧！</p>
+        </div>
       </div>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+
 export default {
   name: 'BargainIndex',
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       searchKeyword: '',
@@ -134,17 +145,269 @@ export default {
 }
 </script>
 
-<style scoped>
-.bargain-container {
-  padding-bottom: 60px;
-}
+<style lang="scss" scoped>
+#bargain {
+  .content {
+    padding-top: 40px;
+    padding-bottom: 60px;
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: #f5f5f5;
-  position: relative;
+    .search-bar {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #f5f5f5;
+      position: relative;
+
+      input {
+        width: 100%;
+        padding: 8px 30px 8px 10px;
+        border: none;
+        border-radius: 20px;
+        background-color: #fff;
+        font-size: 14px;
+      }
+
+      i {
+        position: absolute;
+        right: 20px;
+        color: #999;
+        font-size: 16px;
+      }
+    }
+
+    .daily-deals {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+
+      .daily-deals-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h2 {
+          font-size: 18px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .view-all {
+          padding: 5px 10px;
+          background-color: #ff6b6b;
+          color: #fff;
+          border: none;
+          border-radius: 15px;
+          font-size: 14px;
+        }
+      }
+
+      .daily-deals-list {
+        display: flex;
+        overflow-x: auto;
+
+        .deal-item {
+          flex-shrink: 0;
+          width: 120px;
+          margin-right: 10px;
+          cursor: pointer;
+
+          img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+          }
+
+          .deal-info {
+            h3 {
+              font-size: 14px;
+              margin: 5px 0;
+              color: #333;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .price {
+              font-size: 16px;
+              color: #ff6b6b;
+              font-weight: bold;
+              margin: 0;
+            }
+
+            .original-price {
+              font-size: 12px;
+              color: #999;
+              text-decoration: line-through;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+
+    .category-tabs {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+
+      .category-tab {
+        flex-shrink: 0;
+        padding: 8px 15px;
+        margin-right: 10px;
+        background-color: #f5f5f5;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &.active {
+          background-color: #ff6b6b;
+          color: #fff;
+        }
+      }
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+
+      .product-item {
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+
+        img {
+          width: 100%;
+          height: 150px;
+          object-fit: cover;
+        }
+
+        .product-info {
+          padding: 10px;
+
+          h3 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          .price {
+            font-size: 16px;
+            color: #ff6b6b;
+            font-weight: bold;
+            margin: 0 0 2px 0;
+          }
+
+          .original-price {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+            margin: 0 0 2px 0;
+          }
+
+          .sales {
+            font-size: 12px;
+            color: #999;
+            margin: 0;
+          }
+        }
+      }
+    }
+
+    .my-submissions {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 10px;
+
+      .my-submissions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h2 {
+          font-size: 18px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .submit-deal {
+          padding: 5px 10px;
+          background-color: #ff6b6b;
+          color: #fff;
+          border: none;
+          border-radius: 15px;
+          font-size: 14px;
+        }
+      }
+
+      .submissions-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+
+        .submission-item {
+          background-color: #f5f5f5;
+          border-radius: 8px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+          }
+
+          .submission-info {
+            padding: 8px;
+
+            h3 {
+              font-size: 14px;
+              margin: 0 0 5px 0;
+              color: #333;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+            }
+
+            .price {
+              font-size: 16px;
+              color: #ff6b6b;
+              font-weight: bold;
+              margin: 0 0 2px 0;
+            }
+
+            .status {
+              font-size: 12px;
+              color: #999;
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      .empty-submissions {
+        text-align: center;
+        padding: 20px;
+        color: #999;
+      }
+    }
+  }
 }
 
 .search-bar input {
