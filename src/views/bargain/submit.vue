@@ -1,8 +1,8 @@
 <template>
-  <div class="bargain-submit">
-    <div class="submit-header">
-      <h1>发布爆料</h1>
-    </div>
+  <div id="bargain-submit">
+    <Header title="发布爆料">
+      <i class="back" @touchstart="handleBack" @click="handleBack"></i>
+    </Header>
 
     <div class="submit-form">
       <div class="form-group">
@@ -40,12 +40,20 @@
         {{ isSubmitting ? '发布中...' : '发布爆料' }}
       </button>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+
 export default {
   name: 'BargainSubmit',
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       productName: '',
@@ -59,6 +67,9 @@ export default {
     }
   },
   methods: {
+    handleBack() {
+      this.$router.go(-1);
+    },
     onImageChange(e) {
       const file = e.target.files[0];
       if (file) {
@@ -89,27 +100,23 @@ export default {
 }
 </script>
 
-<style scoped>
-.bargain-submit {
+<style lang="scss" scoped>
+#bargain-submit {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 40px;
   padding-bottom: 60px;
 }
 
-.submit-header {
+.submit-form {
   padding: 15px;
   background-color: #fff;
-  border-bottom: 1px solid #f0f0f0;
-  margin-bottom: 15px;
-}
-
-.submit-header h1 {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  margin: 0;
-}
-
-.submit-form {
-  padding: 0 15px;
 }
 
 .form-group {
@@ -149,7 +156,7 @@ export default {
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background-color: #ff6b6b;
+  background-color: red;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -162,5 +169,15 @@ export default {
 .submit-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.back {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
 }
 </style>

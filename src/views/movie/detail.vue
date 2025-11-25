@@ -1,7 +1,7 @@
 <template>
   <div id="detail">
     <Header title="电影详情">
-      <i class="back" @touchstart="handleTOBack"></i>
+      <i class="back" @touchstart="handleTOBack" @click="handleTOBack"></i>
     </Header>
     <div class="content">
       <!-- 影片介绍 -->

@@ -10,7 +10,7 @@
           <p>喵眼城市</p>
       </router-link>
       <router-link tag="li" to="/bargain">
-        <img src="@/assets/movie.png" alt>
+        <img src="@/assets/max.png" alt>
         <p>特价</p>
       </router-link>
       <router-link tag="li" to="/member">

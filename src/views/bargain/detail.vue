@@ -1,5 +1,8 @@
 <template>
-  <div class="bargain-detail">
+  <div id="bargain-detail">
+    <Header title="商品详情">
+      <i class="back" @touchstart="handleBack" @click="handleBack"></i>
+    </Header>
     <!-- 商品图片 -->
     <div class="product-image">
       <img :src="product.image" :alt="product.name">
@@ -33,12 +36,20 @@
       <button class="add-to-cart">加入购物车</button>
       <button class="buy-now">立即购买</button>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+
 export default {
   name: 'BargainDetail',
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       product: {
@@ -58,8 +69,13 @@ export default {
     // 根据路由参数获取商品详情
     const productId = this.$route.params.id;
     // 这里可以添加获取商品详情的逻辑
+    // eslint-disable-next-line no-console
+    console.log('商品ID:', productId);
   },
   methods: {
+    handleBack() {
+      this.$router.go(-1);
+    },
     addToCart() {
       // 加入购物车逻辑
       alert('商品已加入购物车');
@@ -72,9 +88,18 @@ export default {
 }
 </script>
 
-<style scoped>
-.bargain-detail {
-  padding-bottom: 60px;
+<style lang="scss" scoped>
+#bargain-detail {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 40px;
+  padding-bottom: 120px;
 }
 
 .product-image {
@@ -107,7 +132,7 @@ export default {
 
 .current-price {
   font-size: 24px;
-  color: #ff6b6b;
+  color: red;
   font-weight: bold;
   margin-right: 10px;
 }
@@ -178,12 +203,22 @@ export default {
 }
 
 .add-to-cart {
-  background-color: #ff6b6b;
+  background-color: red;
   color: #fff;
 }
 
 .buy-now {
   background-color: #ff9800;
   color: #fff;
+}
+
+.back {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
 }
 </style>
