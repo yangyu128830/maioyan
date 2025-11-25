@@ -69,8 +69,13 @@ export default {
   },
   created() {
     // 根据路由参数获取商品详情
-    const productId = this.$route.params.id;
-    // 这里可以添加获取商品详情的逻辑
+    const { id } = this.$route.params;
+    // 根据ID获取不同的商品数据（模拟）
+    if (id && id !== '1') {
+      // 这里可以添加根据实际ID获取商品详情的逻辑
+      // eslint-disable-next-line no-console
+      // console.log('正在加载商品ID:', id);
+    }
   },
   methods: {
     handleBack() {
