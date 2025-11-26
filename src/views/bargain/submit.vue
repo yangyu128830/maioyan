@@ -84,7 +84,7 @@ export default {
     submitDeal() {
       // 表单验证
       if (!this.productName || !this.productPrice || !this.originalPrice || !this.productDescription) {
-        // 请填写完整的商品信息
+        alert('请填写完整的商品信息');
         return;
       }
 
@@ -92,7 +92,7 @@ export default {
       this.isSubmitting = true;
       setTimeout(() => {
         this.isSubmitting = false;
-        // 爆料发布成功！
+        alert('爆料发布成功！');
         this.$router.push('/bargain');
       }, 2000);
     }

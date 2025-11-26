@@ -183,7 +183,7 @@ export default {
     onSearch() {
       // 搜索逻辑
       // eslint-disable-next-line no-console
-      // 搜索关键词
+      console.log('搜索关键词:', this.searchKeyword);
     },
     viewAllDeals() {
       // 查看全部天天低价商品
@@ -203,7 +203,7 @@ export default {
     },
     showMessage() {
       // 显示消息
-      // 消息功能开发中...
+      alert('消息功能开发中...');
     }
   }
 }
