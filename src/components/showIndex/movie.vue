@@ -1,153 +1,169 @@
 <template>
-  <div class="movie-show">
+  <div class="movie-category">
     <!-- 热门电影演出 -->
-    <div class="hot-shows">
-      <div class="section-title">热门电影演出</div>
-      <div class="show-list">
-        <div class="show-item" v-for="show in hotShows" :key="show.id">
-          <img :src="show.img" alt="" class="show-img">
-          <div class="show-info">
-            <div class="show-name">{{ show.name }}</div>
-            <div class="show-desc">{{ show.desc }}</div>
-            <div class="show-price">¥{{ show.price }}起</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 待映电影 -->
-    <div class="coming-shows">
-      <div class="section-title">待映电影</div>
-      <div class="show-list">
-        <div class="show-item" v-for="show in comingShows" :key="show.id">
-          <img :src="show.img" alt="" class="show-img">
-          <div class="show-info">
-            <div class="show-name">{{ show.name }}</div>
-            <div class="show-desc">{{ show.desc }}</div>
-            <div class="show-date">{{ show.date }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 热门推荐 -->
-    <div class="hot-recommends">
-      <div class="section-title">热门推荐</div>
-      <div class="recommend-list">
-        <div class="recommend-item" v-for="item in hotRecommends" :key="item.id">
-          <img :src="item.img" alt="" class="recommend-img">
-          <div class="recommend-name">{{ item.name }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 新电影推荐广告 -->
-    <div class="new-movie-ad">
-      <img src="@/assets/movie.jpg" alt="新电影推荐" class="ad-img">
-    </div>
-
-    <!-- 优惠团购 -->
-    <div class="group-buy">
-      <div class="section-title">优惠团购</div>
-      <div class="group-list">
-        <div class="group-item" v-for="item in groupBuys" :key="item.id">
-          <img :src="item.img" alt="" class="group-img">
-          <div class="group-info">
-            <div class="group-name">{{ item.name }}</div>
-            <div class="group-desc">{{ item.desc }}</div>
-            <div class="group-price">
-              <span class="current-price">¥{{ item.currentPrice }}</span>
-              <span class="original-price">¥{{ item.originalPrice }}</span>
+    <section class="section">
+      <h2 class="section-title">热门电影演出</h2>
+      <div class="movie-list">
+        <div class="movie-item" v-for="movie in hotMovies" :key="movie.id">
+          <img :src="movie.image" :alt="movie.title" class="movie-poster">
+          <div class="movie-info">
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <p class="movie-desc">{{ movie.description }}</p>
+            <div class="movie-meta">
+              <span class="movie-price">¥{{ movie.price }}</span>
+              <span class="movie-rating">评分 {{ movie.rating }}</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+    
+    <!-- 待映电影 -->
+    <section class="section">
+      <h2 class="section-title">待映电影</h2>
+      <div class="movie-list">
+        <div class="movie-item" v-for="movie in upcomingMovies" :key="movie.id">
+          <img :src="movie.image" :alt="movie.title" class="movie-poster">
+          <div class="movie-info">
+            <h3 class="movie-title">{{ movie.title }}</h3>
+            <p class="movie-desc">{{ movie.description }}</p>
+            <div class="movie-meta">
+              <span class="movie-release">上映时间: {{ movie.releaseDate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 热门推荐 -->
+    <section class="section">
+      <h2 class="section-title">热门推荐</h2>
+      <div class="recommendation-list">
+        <div class="recommendation-item" v-for="item in recommendations" :key="item.id">
+          <img :src="item.image" :alt="item.title" class="recommendation-image">
+          <div class="recommendation-info">
+            <h3 class="recommendation-title">{{ item.title }}</h3>
+            <p class="recommendation-desc">{{ item.description }}</p>
+            <span class="recommendation-tag">{{ item.tag }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 新电影推荐广告 -->
+    <section class="section">
+      <div class="ad-banner">
+        <img src="@/assets/movie.jpg" alt="新电影推荐" class="ad-image">
+      </div>
+    </section>
+    
+    <!-- 优惠团购 -->
+    <section class="section">
+      <h2 class="section-title">优惠团购</h2>
+      <div class="group-buy-list">
+        <div class="group-buy-item" v-for="item in groupBuys" :key="item.id">
+          <img :src="item.image" :alt="item.title" class="group-buy-image">
+          <div class="group-buy-info">
+            <h3 class="group-buy-title">{{ item.title }}</h3>
+            <p class="group-buy-desc">{{ item.description }}</p>
+            <div class="group-buy-price">
+              <span class="original-price">¥{{ item.originalPrice }}</span>
+              <span class="current-price">¥{{ item.currentPrice }}</span>
+            </div>
+            <button class="buy-btn">立即购买</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'movieShow',
+  name: 'MovieCategory',
   data() {
     return {
-      hotShows: [
+      // 热门电影演出数据
+      hotMovies: [
         {
           id: 1,
-          img: 'https://via.placeholder.com/120x160',
-          name: '复仇者联盟4：终局之战',
-          desc: 'IMAX 3D 英语原版',
-          price: 89
+          title: '复仇者联盟4：终局之战',
+          description: '漫威超级英雄终极之战',
+          image: 'https://via.placeholder.com/200x300',
+          price: 89,
+          rating: 9.2
         },
         {
           id: 2,
-          img: 'https://via.placeholder.com/120x160',
-          name: '流浪地球2',
-          desc: '2D 国语',
-          price: 69
+          title: '流浪地球',
+          description: '中国科幻电影里程碑',
+          image: 'https://via.placeholder.com/200x300',
+          price: 79,
+          rating: 8.5
         },
         {
           id: 3,
-          img: 'https://via.placeholder.com/120x160',
-          name: '蜘蛛侠：纵横宇宙',
-          desc: '3D 英语原版',
-          price: 79
+          title: '哪吒之魔童降世',
+          description: '国产动画电影佳作',
+          image: 'https://via.placeholder.com/200x300',
+          price: 69,
+          rating: 8.8
         }
       ],
-      comingShows: [
+      
+      // 待映电影数据
+      upcomingMovies: [
         {
           id: 4,
-          img: 'https://via.placeholder.com/120x160',
-          name: '阿凡达：水之道',
-          desc: 'IMAX 3D 英语原版',
-          date: '即将上映'
+          title: '阿凡达2：水之道',
+          description: '詹姆斯·卡梅隆全新力作',
+          image: 'https://via.placeholder.com/200x300',
+          releaseDate: '2022-12-16'
         },
         {
           id: 5,
-          img: 'https://via.placeholder.com/120x160',
-          name: '变形金刚：超能勇士崛起',
-          desc: '3D 英语原版',
-          date: '即将上映'
+          title: '蜘蛛侠：纵横宇宙',
+          description: '多元宇宙冒险继续',
+          image: 'https://via.placeholder.com/200x300',
+          releaseDate: '2023-06-02'
         }
       ],
-      hotRecommends: [
+      
+      // 热门推荐数据
+      recommendations: [
         {
           id: 6,
-          img: 'https://via.placeholder.com/80x80',
-          name: '科幻大片合集'
+          title: '电影票优惠套餐',
+          description: '2张电影票+2杯可乐+1桶爆米花',
+          image: 'https://via.placeholder.com/150x100',
+          tag: '优惠套餐'
         },
         {
           id: 7,
-          img: 'https://via.placeholder.com/80x80',
-          name: '喜剧电影推荐'
-        },
+          title: 'IMAX观影体验',
+          description: '极致视听享受',
+          image: 'https://via.placeholder.com/150x100',
+          tag: 'IMAX'
+        }
+      ],
+      
+      // 优惠团购数据
+      groupBuys: [
         {
           id: 8,
-          img: 'https://via.placeholder.com/80x80',
-          name: '爱情片精选'
+          title: '双人观影套餐',
+          description: '2张电影票+小吃套餐',
+          image: 'https://via.placeholder.com/200x150',
+          originalPrice: 120,
+          currentPrice: 88
         },
         {
           id: 9,
-          img: 'https://via.placeholder.com/80x80',
-          name: '悬疑烧脑电影'
-        }
-      ],
-      groupBuys: [
-        {
-          id: 10,
-          img: 'https://via.placeholder.com/100x100',
-          name: '双人观影套餐',
-          desc: '两张电影票+两份可乐+一份爆米花',
-          currentPrice: 129,
-          originalPrice: 199
-        },
-        {
-          id: 11,
-          img: 'https://via.placeholder.com/100x100',
-          name: '单人观影套餐',
-          desc: '一张电影票+一份可乐+一份爆米花',
-          currentPrice: 69,
-          originalPrice: 99
+          title: '家庭观影套票',
+          description: '4张电影票+全家桶套餐',
+          image: 'https://via.placeholder.com/200x150',
+          originalPrice: 200,
+          currentPrice: 138
         }
       ]
     }
@@ -156,208 +172,290 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.movie-show {
+.movie-category {
+  padding: 0;
+}
+
+.section {
+  margin-bottom: 25px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  position: relative;
+  padding-left: 15px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, #ff4d4f, #ff7875);
+    border-radius: 2px;
+  }
+}
+
+.movie-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.movie-item {
+  width: calc(33.333% - 13.333px);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.movie-poster {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  
+  .movie-item:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.movie-info {
   padding: 15px;
-  .section-title {
-    font-size: 20px;
+}
+
+.movie-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.movie-desc {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+}
+
+.movie-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  
+  .movie-price {
+    color: #ff4d4f;
     font-weight: 600;
-    margin: 25px 0 15px 0;
-    color: #333;
-    position: relative;
-    &::before {
-      content: '';
-      position: absolute;
-      left: -15px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 20px;
-      background: linear-gradient(to bottom, #ff4d4f, #ff7875);
-      border-radius: 2px;
-    }
+    font-size: 14px;
   }
-  .show-list {
-    display: flex;
-    overflow-x: auto;
-    padding-bottom: 15px;
-    scrollbar-width: thin;
-    scrollbar-color: #ff4d4f #f5f5f5;
-    &::-webkit-scrollbar {
-      height: 6px;
-    }
-    &::-webkit-scrollbar-track {
-      background: #f5f5f5;
-      border-radius: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #ff4d4f;
-      border-radius: 3px;
-    }
-    .show-item {
-      width: 140px;
-      margin-right: 18px;
-      flex-shrink: 0;
-      background-color: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-      }
-      .show-img {
-        width: 140px;
-        height: 187px;
-        object-fit: cover;
-      }
-      .show-info {
-        padding: 12px;
-        .show-name {
-          font-size: 15px;
-          font-weight: 500;
-          color: #333;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          margin-bottom: 4px;
-        }
-        .show-desc {
-          font-size: 12px;
-          color: #666;
-          margin-bottom: 6px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .show-price {
-          font-size: 16px;
-          font-weight: 600;
-          color: #ff4d4f;
-        }
-        .show-date {
-          font-size: 12px;
-          color: #999;
-          margin-top: 6px;
-          padding: 2px 8px;
-          background-color: #f5f5f5;
-          border-radius: 10px;
-          display: inline-block;
-        }
-      }
-    }
+  
+  .movie-rating {
+    color: #faad14;
+    font-weight: 500;
   }
-  .recommend-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    .recommend-item {
-      width: calc(25% - 11px);
-      margin-bottom: 15px;
-      text-align: center;
-      transition: all 0.3s ease;
-      &:hover {
-        transform: translateY(-3px);
-      }
-      .recommend-img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin: 0 auto;
-        display: block;
-        object-fit: cover;
-        border: 3px solid #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        &:hover {
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-        }
-      }
-      .recommend-name {
-        font-size: 12px;
-        font-weight: 500;
-        color: #333;
-        text-align: center;
-        margin-top: 8px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
+}
+
+.recommendation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.recommendation-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  border-left: 4px solid #1890ff;
+  
+  &:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
   }
-  .new-movie-ad {
-    margin: 30px 0;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+}
+
+.recommendation-image {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.recommendation-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.recommendation-desc {
+  font-size: 13px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+}
+
+.recommendation-tag {
+  font-size: 11px;
+  color: #fff;
+  background: linear-gradient(90deg, #1890ff, #40a9ff);
+  padding: 4px 10px;
+  border-radius: 12px;
+  align-self: flex-start;
+  font-weight: 500;
+}
+
+.ad-banner {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  
+  .ad-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    .ad-img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
+      transform: scale(1.02);
     }
   }
-  .group-list {
-    .group-item {
-      display: flex;
-      margin-bottom: 18px;
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-      }
-      .group-img {
-        width: 100px;
-        height: 100px;
-        border-radius: 8px;
-        margin-right: 15px;
-        object-fit: cover;
-      }
-      .group-info {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        .group-name {
-          font-size: 16px;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 6px;
-        }
-        .group-desc {
-          font-size: 13px;
-          color: #666;
-          margin-bottom: 10px;
-          line-height: 1.4;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-        }
-        .group-price {
-          .current-price {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ff4d4f;
-          }
-          .original-price {
-            font-size: 13px;
-            color: #999;
-            text-decoration: line-through;
-            margin-left: 8px;
-          }
-        }
-      }
-    }
+}
+
+.group-buy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.group-buy-item {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.group-buy-image {
+  width: 160px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.group-buy-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.group-buy-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.group-buy-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.group-buy-price {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  
+  .original-price {
+    font-size: 15px;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+  }
+  
+  .current-price {
+    font-size: 22px;
+    color: #ff4d4f;
+    font-weight: 600;
+  }
+}
+
+.buy-btn {
+  align-self: flex-start;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #ff4d4f, #ff7875);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+  
+  &:hover {
+    background: linear-gradient(90deg, #ff7875, #ff4d4f);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 77, 79, 0.4);
   }
 }
 </style>

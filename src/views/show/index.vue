@@ -1,90 +1,110 @@
 <template>
   <div id="showPage">
-    <Header title="电影演出" />
-    <div class="show-tabs">
-      <router-link tag="div" to="/show/movie" :class="{active: $route.path === '/show/movie'}">
-        电影
-      </router-link>
-      <router-link tag="div" to="/show/concert" :class="{active: $route.path === '/show/concert'}">
-        演唱会
-      </router-link>
-      <router-link tag="div" to="/show/performance" :class="{active: $route.path === '/show/performance'}">
-        演出
-      </router-link>
-      <router-link tag="div" to="/show/talkshow" :class="{active: $route.path === '/show/talkshow'}">
-        脱口秀
+    <!-- 顶部分类标签 -->
+    <div class="category-tabs">
+      <router-link 
+        v-for="category in categories" 
+        :key="category.path"
+        :to="`/show/${category.path}`"
+        :class="['tab-item', { active: $route.path.includes(category.path) }]"
+      >
+        {{ category.name }}
       </router-link>
     </div>
-    <router-view />
-    <Footer />
+    
+    <!-- 内容区域 -->
+    <div class="content-wrapper">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
-import Header from '@/components/header'
-import Footer from '@/components/footer'
-
 export default {
-  name: 'showPage',
-  components: {
-    Header,
-    Footer
+  name: 'ShowIndex',
+  data() {
+    return {
+      categories: [
+        { name: '电影', path: 'movie' },
+        { name: '演唱会', path: 'concert' },
+        { name: '演出', path: 'performance' },
+        { name: '脱口秀', path: 'talkshow' }
+      ]
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 #showPage {
+  padding-bottom: 60px; // 为底部导航留出空间
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
-  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-  padding-bottom: 60px;
-  .show-tabs {
-    display: flex;
-    background-color: #fff;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    div {
-      flex: 1;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 500;
-      color: #666;
-      position: relative;
-      transition: all 0.3s ease;
-      &:hover {
-        color: #ff4d4f;
-        background-color: rgba(255, 77, 79, 0.05);
-      }
-      &.active {
-        color: #ff4d4f;
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 30px;
-          height: 3px;
-          background: linear-gradient(to right, #ff4d4f, #ff7875);
-          border-radius: 2px;
-          animation: tabSlide 0.3s ease;
-        }
+}
+
+.category-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  
+  .tab-item {
+    flex: 1;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    
+    &:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+    }
+    
+    &.active {
+      color: #667eea;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 2px;
       }
     }
   }
-  @keyframes tabSlide {
-    from {
-      width: 0;
-    }
-    to {
-      width: 30px;
-    }
+}
+
+.content-wrapper {
+  padding: 0 15px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .category-tabs .tab-item {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-tabs .tab-item {
+    font-size: 13px;
+    padding: 10px 0;
+  }
+
+  .content-wrapper {
+    padding: 0 10px;
   }
 }
 </style>

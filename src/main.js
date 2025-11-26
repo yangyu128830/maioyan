@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './routers'
 import store from './stores'
 import '../public/css/reset.css'
+import './assets/styles/global.scss'
 import axios  from 'axios'
 // 引入图片懒加载 
 // import VueLazyload from 'vue-lazyload'

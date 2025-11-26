@@ -1,22 +1,37 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import ShowIndex from '../../views/show/index.vue'
+
+Vue.use(Router)
+
 export default {
-    path: '/show',
-    component: () => import('@/views/show'),
-    children: [
-        {
-            path: 'movie',
-            component: () => import('@/components/showIndex/movie')
-        },
-        {
-            path: 'concert',
-            component: () => import('@/components/showIndex/concert')
-        },
-        {
-            path: 'performance',
-            component: () => import('@/components/showIndex/performance')
-        },
-        {
-            path: 'talkshow',
-            component: () => import('@/components/showIndex/talkshow')
-        }
-    ]
+  path: '/show',
+  name: 'show',
+  component: ShowIndex,
+  children: [
+    {
+      path: 'movie',
+      name: 'showMovie',
+      component: () => import('../../components/showIndex/movie.vue')
+    },
+    {
+      path: 'concert',
+      name: 'showConcert',
+      component: () => import('../../components/showIndex/concert.vue')
+    },
+    {
+      path: 'performance',
+      name: 'showPerformance',
+      component: () => import('../../components/showIndex/performance.vue')
+    },
+    {
+      path: 'talkshow',
+      name: 'showTalkshow',
+      component: () => import('../../components/showIndex/talkshow.vue')
+    },
+    {
+      path: '',
+      redirect: 'movie'
+    }
+  ]
 }
