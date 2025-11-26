@@ -5,6 +5,10 @@
         <img src="@/assets/movie.png" alt>
         <p>喵眼电影</p>
       </router-link>
+      <router-link tag="li" to="/show">
+        <img src="@/assets/movie.png" alt>
+        <p>电影演出</p>
+      </router-link>
       <router-link tag="li" to="/city">
           <img src="@/assets/CityHall.png" alt>
           <p>喵眼城市</p>
@@ -47,7 +51,7 @@ export default {
   }
   ul li {
     float: left;
-    width: 20%;
+    width: 16.6667%;
     height: 60px;
     display: flex;
     flex-direction: column;

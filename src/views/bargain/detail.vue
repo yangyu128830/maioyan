@@ -67,10 +67,10 @@ export default {
   },
   created() {
     // 根据路由参数获取商品详情
-    const productId = this.$route.params.id;
+    // const productId = this.$route.params.id;
     // 这里可以添加获取商品详情的逻辑
     // eslint-disable-next-line no-console
-    console.log('商品ID:', productId);
+    // 商品ID
   },
   methods: {
     handleBack() {
@@ -78,11 +78,11 @@ export default {
     },
     addToCart() {
       // 加入购物车逻辑
-      alert('商品已加入购物车');
+      // 商品已加入购物车
     },
     buyNow() {
       // 立即购买逻辑
-      alert('立即购买功能开发中');
+      // 立即购买功能开发中
     }
   }
 }
