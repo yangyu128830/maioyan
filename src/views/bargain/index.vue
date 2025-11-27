@@ -1,45 +1,25 @@
 <template>
-  <div id="bargain">
-    <Header title="特价">
-      <div class="header-right">
-        <i class="iconfont icon-message" @click="showMessage"></i>
-        <i class="iconfont icon-person" @click="goToPerson"></i>
-      </div>
-    </Header>
-    
+  <div class="bargain-container">
+    <Header title="特价商品"/>
     <!-- 搜索框 -->
-    <div class="search-section">
-      <div class="search-bar">
-        <i class="iconfont icon-search"></i>
-        <input type="text" placeholder="搜索特价商品" v-model="searchKeyword" @input="onSearch">
-      </div>
-    </div>
-
-    <!-- 轮播图 -->
-    <div class="banner-section">
-      <img src="@/assets/movie.jpg" alt="特价活动 banner" class="banner-image">
+    <div class="search-box">
+      <input type="text" placeholder="搜索商品" v-model="searchKeyword" @keyup.enter="searchGoods">
+      <button @click="searchGoods" class="btn">搜索</button>
     </div>
 
     <!-- 天天低价商品框 -->
-    <div class="daily-deals-section">
-      <div class="section-header">
+    <div class="daily-bargain">
+      <div class="daily-header">
         <h2>天天低价</h2>
-        <span class="more" @click="viewAllDeals">查看全部 ></span>
+        <button @click="viewAllBargains">查看全部</button>
       </div>
-      <div class="daily-deals-list">
-        <div class="deal-item" v-for="item in dailyDeals" :key="item.id" @click="goToDetail(item.id)">
-          <div class="deal-image-wrapper">
-            <img :src="item.image" :alt="item.name" class="deal-image">
-            <div class="discount-tag">
-              {{ Math.round((1 - item.price / item.originalPrice) * 100) }}折
-            </div>
-          </div>
-          <div class="deal-info">
-            <h3 class="deal-name">{{ item.name }}</h3>
-            <div class="price-section">
-              <span class="current-price">¥{{ item.price }}</span>
-              <span class="original-price">¥{{ item.originalPrice }}</span>
-            </div>
+      <div class="daily-goods">
+        <div class="goods-item" v-for="goods in dailyGoods" :key="goods.id" @click="viewGoodsDetail(goods.id)">
+          <img :src="goods.image" :alt="goods.name">
+          <div class="goods-info">
+            <h3>{{ goods.name }}</h3>
+            <p class="price">¥{{ goods.price }}</p>
+            <p class="original-price">¥{{ goods.originalPrice }}</p>
           </div>
         </div>
       </div>
@@ -48,69 +28,69 @@
     <!-- 分类表 -->
     <div class="category-section">
       <div class="category-tabs">
-        <div class="category-tab" v-for="category in categories" :key="category.id" :class="{ active: currentCategory === category.id }" @click="switchCategory(category.id)">
+        <button 
+          v-for="category in categories" 
+          :key="category.id" 
+          :class="{ active: currentCategory === category.id }"
+          @click="switchCategory(category.id)"
+        >
           {{ category.name }}
-        </div>
+        </button>
       </div>
-    </div>
-
-    <!-- 商品列表 -->
-    <div class="product-section">
-      <div class="product-list">
-        <div class="product-item" v-for="product in filteredProducts" :key="product.id" @click="goToDetail(product.id)">
-          <div class="product-image-wrapper">
-            <img :src="product.image" :alt="product.name" class="product-image">
-            <div class="sales-tag" v-if="product.sales > 0">
-              已售{{ product.sales }}件
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">{{ product.name }}</h3>
-            <div class="price-section">
-              <span class="current-price">¥{{ product.price }}</span>
-              <span class="original-price">¥{{ product.originalPrice }}</span>
-            </div>
-            <div class="sales-info">
-              <span class="sales-count">已售{{ product.sales }}件</span>
-            </div>
+      <div class="category-goods">
+        <div class="goods-item" v-for="goods in currentCategoryGoods" :key="goods.id" @click="viewGoodsDetail(goods.id)">
+          <img :src="goods.image" :alt="goods.name">
+          <div class="goods-info">
+            <h3>{{ goods.name }}</h3>
+            <p class="price">¥{{ goods.price }}</p>
+            <p class="original-price">¥{{ goods.originalPrice }}</p>
+            <p class="sales-volume">已售{{ goods.salesVolume }}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 我的爆料板块 -->
-    <div class="submissions-section">
-      <div class="section-header">
+    <!-- 我的爆料 -->
+    <div class="my-bargain">
+      <div class="my-bargain-header">
         <h2>我的爆料</h2>
-        <button class="submit-btn" @click="goToSubmit">发布爆料</button>
+        <button @click="addBargain">+ 发布爆料</button>
       </div>
-      <div class="submissions-list" v-if="mySubmissions.length > 0">
-        <div class="submission-item" v-for="item in mySubmissions" :key="item.id">
-          <div class="submission-image-wrapper">
-            <img :src="item.image" :alt="item.name" class="submission-image">
-          </div>
-          <div class="submission-info">
-            <h3 class="submission-name">{{ item.name }}</h3>
-            <div class="price-section">
-              <span class="current-price">¥{{ item.price }}</span>
-            </div>
-            <div class="status-section">
-              <span class="status-tag" :class="item.status">{{ item.status }}</span>
-            </div>
+      <div class="my-bargain-list" v-if="myBargainList.length > 0">
+        <div class="bargain-item" v-for="bargain in myBargainList" :key="bargain.id">
+          <img :src="bargain.image" :alt="bargain.name">
+          <div class="bargain-info">
+            <h3>{{ bargain.name }}</h3>
+            <p class="price">¥{{ bargain.price }}</p>
+            <p class="status">{{ bargain.status }}</p>
           </div>
         </div>
       </div>
-      <div class="empty-submissions" v-else>
-        <div class="empty-icon">
-          <i class="iconfont icon-plus"></i>
-        </div>
-        <p class="empty-text">您还没有发布过爆料</p>
-        <p class="empty-desc">快来分享您发现的低价商品吧！</p>
-        <button class="empty-submit-btn" @click="goToSubmit">发布第一条爆料</button>
+      <div class="empty-bargain" v-else>
+        <p>您还没有发布过爆料，快来分享您发现的低价商品吧！</p>
       </div>
     </div>
-    
-    <Footer/>
+
+    <!-- 商品详情弹窗 -->
+    <div class="goods-detail-modal" v-if="showDetailModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>{{ selectedGoods.name }}</h2>
+          <button @click="closeDetailModal">×</button>
+        </div>
+        <div class="modal-body">
+          <img :src="selectedGoods.image" :alt="selectedGoods.name">
+          <div class="goods-detail-info">
+            <p class="price">¥{{ selectedGoods.price }}</p>
+            <p class="original-price">¥{{ selectedGoods.originalPrice }}</p>
+            <p class="description">{{ selectedGoods.description }}</p>
+            <p class="sales-volume">已售{{ selectedGoods.salesVolume }}</p>
+            <button class="buy-button">立即购买</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <Footer />
   </div>
 </template>
 
@@ -119,7 +99,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 
 export default {
-  name: 'BargainIndex',
+  name: 'Bargain',
   components: {
     Header,
     Footer
@@ -128,495 +108,460 @@ export default {
     return {
       searchKeyword: '',
       currentCategory: 1,
+      showDetailModal: false,
+      selectedGoods: {},
+      dailyGoods: [
+        { id: 1, name: '特价商品1', price: 9.9, originalPrice: 19.9, image: 'https://via.placeholder.com/100', salesVolume: 1000 },
+        { id: 2, name: '特价商品2', price: 19.9, originalPrice: 39.9, image: 'https://via.placeholder.com/100', salesVolume: 800 },
+        { id: 3, name: '特价商品3', price: 29.9, originalPrice: 59.9, image: 'https://via.placeholder.com/100', salesVolume: 600 },
+        { id: 4, name: '特价商品4', price: 39.9, originalPrice: 79.9, image: 'https://via.placeholder.com/100', salesVolume: 400 }
+      ],
       categories: [
         { id: 1, name: '精选' },
         { id: 2, name: '24h最热' },
         { id: 3, name: '3h最热' },
         { id: 4, name: '好价活动' },
         { id: 5, name: '食品' },
-        { id: 6, name: '居家' },
-        { id: 7, name: '数码' },
-        { id: 8, name: '美妆' }
+        { id: 6, name: '居家' }
       ],
-      dailyDeals: [
-        { id: 1, name: '精选零食大礼包', price: 9.9, originalPrice: 19.9, image: '@/assets/lazy1.jpg' },
-        { id: 2, name: '优质纯棉T恤', price: 19.9, originalPrice: 39.9, image: '@/assets/movie.jpg' },
-        { id: 3, name: '时尚运动鞋', price: 29.9, originalPrice: 59.9, image: '@/assets/CityHall.png' },
-        { id: 4, name: '美味巧克力', price: 14.9, originalPrice: 29.9, image: '@/assets/lazy1.jpg' }
-      ],
-      allProducts: [
-        { id: 1, name: '精选零食大礼包', price: 19.9, originalPrice: 39.9, image: '@/assets/lazy1.jpg', sales: 1234, category: 1 },
-        { id: 2, name: '优质纯棉T恤', price: 29.9, originalPrice: 59.9, image: '@/assets/movie.jpg', sales: 2345, category: 1 },
-        { id: 3, name: '时尚运动鞋', price: 99.9, originalPrice: 199.9, image: '@/assets/CityHall.png', sales: 3456, category: 1 },
-        { id: 4, name: '美味巧克力', price: 24.9, originalPrice: 49.9, image: '@/assets/lazy1.jpg', sales: 4567, category: 1 },
-        { id: 5, name: '24h热卖手机壳', price: 9.9, originalPrice: 19.9, image: '@/assets/movie.jpg', sales: 5678, category: 2 },
-        { id: 6, name: '爆款蓝牙耳机', price: 39.9, originalPrice: 79.9, image: '@/assets/CityHall.png', sales: 6789, category: 2 },
-        { id: 7, name: '3h新品面膜', price: 14.9, originalPrice: 29.9, image: '@/assets/lazy1.jpg', sales: 7890, category: 3 },
-        { id: 8, name: '限时优惠洗发水', price: 49.9, originalPrice: 99.9, image: '@/assets/movie.jpg', sales: 8901, category: 3 },
-        { id: 9, name: '好价活动洗衣液', price: 24.9, originalPrice: 49.9, image: '@/assets/CityHall.png', sales: 9012, category: 4 },
-        { id: 10, name: '超值卫生纸', price: 59.9, originalPrice: 119.9, image: '@/assets/lazy1.jpg', sales: 10123, category: 4 },
-        { id: 11, name: '健康有机食品', price: 12.9, originalPrice: 25.9, image: '@/assets/movie.jpg', sales: 11234, category: 5 },
-        { id: 12, name: '美味坚果组合', price: 34.9, originalPrice: 69.9, image: '@/assets/CityHall.png', sales: 12345, category: 5 },
-        { id: 13, name: '居家必备收纳盒', price: 49.9, originalPrice: 99.9, image: '@/assets/lazy1.jpg', sales: 13456, category: 6 },
-        { id: 14, name: '舒适床上四件套', price: 79.9, originalPrice: 159.9, image: '@/assets/movie.jpg', sales: 14567, category: 6 },
-        { id: 15, name: '最新款智能手机', price: 2999, originalPrice: 3999, image: '@/assets/CityHall.png', sales: 15678, category: 7 },
-        { id: 16, name: '高性能笔记本电脑', price: 5999, originalPrice: 7999, image: '@/assets/lazy1.jpg', sales: 16789, category: 7 },
-        { id: 17, name: '名牌口红套装', price: 199, originalPrice: 399, image: '@/assets/movie.jpg', sales: 17890, category: 8 },
-        { id: 18, name: '高端护肤品礼盒', price: 499, originalPrice: 999, image: '@/assets/CityHall.png', sales: 18901, category: 8 }
-      ],
-      mySubmissions: [
-        { id: 1, name: '我发布的特价商品1', price: 19.9, originalPrice: 39.9, image: '@/assets/lazy1.jpg', status: '审核中' },
-        { id: 2, name: '我发布的特价商品2', price: 29.9, originalPrice: 59.9, image: '@/assets/movie.jpg', status: '已通过' }
+      allGoods: {
+        1: [
+          { id: 1, name: '精选商品1', price: 9.9, originalPrice: 19.9, image: 'https://via.placeholder.com/100', salesVolume: 1000, description: '这是一个精选商品的描述' },
+          { id: 2, name: '精选商品2', price: 19.9, originalPrice: 39.9, image: 'https://via.placeholder.com/100', salesVolume: 800, description: '这是一个精选商品的描述' },
+          { id: 3, name: '精选商品3', price: 29.9, originalPrice: 59.9, image: 'https://via.placeholder.com/100', salesVolume: 600, description: '这是一个精选商品的描述' },
+          { id: 4, name: '精选商品4', price: 39.9, originalPrice: 79.9, image: 'https://via.placeholder.com/100', salesVolume: 400, description: '这是一个精选商品的描述' }
+        ],
+        2: [
+          { id: 5, name: '24h最热商品1', price: 19.9, originalPrice: 39.9, image: 'https://via.placeholder.com/100', salesVolume: 2000, description: '这是一个24h最热商品的描述' },
+          { id: 6, name: '24h最热商品2', price: 29.9, originalPrice: 59.9, image: 'https://via.placeholder.com/100', salesVolume: 1800, description: '这是一个24h最热商品的描述' }
+        ],
+        3: [
+          { id: 7, name: '3h最热商品1', price: 9.9, originalPrice: 19.9, image: 'https://via.placeholder.com/100', salesVolume: 1500, description: '这是一个3h最热商品的描述' },
+          { id: 8, name: '3h最热商品2', price: 39.9, originalPrice: 79.9, image: 'https://via.placeholder.com/100', salesVolume: 1200, description: '这是一个3h最热商品的描述' }
+        ],
+        4: [
+          { id: 9, name: '好价活动商品1', price: 49.9, originalPrice: 99.9, image: 'https://via.placeholder.com/100', salesVolume: 900, description: '这是一个好价活动商品的描述' },
+          { id: 10, name: '好价活动商品2', price: 59.9, originalPrice: 119.9, image: 'https://via.placeholder.com/100', salesVolume: 700, description: '这是一个好价活动商品的描述' }
+        ],
+        5: [
+          { id: 11, name: '食品商品1', price: 15.9, originalPrice: 29.9, image: 'https://via.placeholder.com/100', salesVolume: 1100, description: '这是一个食品商品的描述' },
+          { id: 12, name: '食品商品2', price: 25.9, originalPrice: 49.9, image: 'https://via.placeholder.com/100', salesVolume: 900, description: '这是一个食品商品的描述' }
+        ],
+        6: [
+          { id: 13, name: '居家商品1', price: 69.9, originalPrice: 139.9, image: 'https://via.placeholder.com/100', salesVolume: 800, description: '这是一个居家商品的描述' },
+          { id: 14, name: '居家商品2', price: 79.9, originalPrice: 159.9, image: 'https://via.placeholder.com/100', salesVolume: 600, description: '这是一个居家商品的描述' }
+        ]
+      },
+      myBargainList: [
+        { id: 1, name: '我爆料的商品1', price: 9.9, image: 'https://via.placeholder.com/100', status: '审核中' },
+        { id: 2, name: '我爆料的商品2', price: 19.9, image: 'https://via.placeholder.com/100', status: '已通过' }
       ]
     }
   },
   computed: {
-    filteredProducts() {
-      let products = this.allProducts.filter(product => product.category === this.currentCategory);
-      if (this.searchKeyword) {
-        products = products.filter(product => product.name.includes(this.searchKeyword));
-      }
-      return products;
+    currentCategoryGoods() {
+      return this.allGoods[this.currentCategory] || []
     }
   },
   methods: {
-    onSearch() {
-      // 搜索逻辑
-      // eslint-disable-next-line no-console
-      console.log('搜索关键词:', this.searchKeyword);
+    searchGoods() {
+      // 这里可以添加搜索逻辑
     },
-    viewAllDeals() {
-      // 查看全部天天低价商品
-      this.currentCategory = 1;
+    viewAllBargains() {
+      // 这里可以添加查看全部逻辑
     },
     switchCategory(categoryId) {
-      this.currentCategory = categoryId;
+      this.currentCategory = categoryId
     },
-    goToDetail(productId) {
-      this.$router.push(`/bargain/detail/${productId}`);
+    viewGoodsDetail(goodsId) {
+      // 查找选中的商品
+      let goods = null
+      for (let category in this.allGoods) {
+        goods = this.allGoods[category].find(item => item.id === goodsId)
+        if (goods) break
+      }
+      if (goods) {
+        this.selectedGoods = goods
+        this.showDetailModal = true
+      }
     },
-    goToSubmit() {
-      this.$router.push('/bargain/submit');
+    closeDetailModal() {
+      this.showDetailModal = false
+      this.selectedGoods = {}
     },
-    goToPerson() {
-      this.$router.push('/person');
-    },
-    showMessage() {
-      // 显示消息
-      alert('消息功能开发中...');
+    addBargain() {
+      // 这里可以添加发布爆料逻辑
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#bargain {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: #f5f5f5;
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding-top: 40px;
-  padding-bottom: 60px;
-}
-
-/* Header 样式 */
-.header-right {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-}
-
-.header-right i {
-  color: #fff;
-  font-size: 20px;
-  margin-left: 15px;
-  cursor: pointer;
+.bargain-container {
+  padding: 20px;
+  padding-top: 68px; // 为顶部导航栏留出空间
+  padding-bottom: 80px; // 为底部导航栏留出空间
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* 搜索框样式 */
-.search-section {
-  padding: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.search-bar {
+.search-box {
   display: flex;
-  align-items: center;
-  padding: 8px 15px;
-  background-color: #f5f5f5;
-  border-radius: 25px;
-}
-
-.search-bar i {
-  color: #999;
-  font-size: 16px;
-  margin-right: 10px;
-}
-
-.search-bar input {
-  flex: 1;
-  border: none;
-  background-color: transparent;
-  font-size: 14px;
-  color: #333;
-}
-
-.search-bar input::placeholder {
-  color: #999;
-}
-
-/* 轮播图样式 */
-.banner-section {
-  margin-bottom: 10px;
-}
-
-.banner-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+  margin-bottom: 20px;
+  input {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px 0 0 25px;
+    outline: none;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+  }
+  .btn {
+    border-radius: 0 25px 25px 0;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
 }
 
 /* 天天低价样式 */
-.daily-deals-section {
-  padding: 10px;
-  background-color: #fff;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.daily-bargain {
+  margin-bottom: 30px;
+  .daily-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #fff;
+      position: relative;
+      padding-left: 15px;
+    }
+    h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, #ff6b6b, #ee5a24);
+      border-radius: 2px;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+    }
+  }
+  .daily-goods {
+    display: flex;
+    overflow-x: auto;
+    .goods-item {
+      flex-shrink: 0;
+      width: 150px;
+      margin-right: 15px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      padding: 10px;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+      img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .goods-info {
+        padding: 5px 0;
+        h3 {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .price {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #ff4d4f;
+          font-weight: bold;
+        }
+        .original-price {
+          margin: 5px 0;
+          font-size: 12px;
+          color: #999;
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.section-header h2 {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin: 0;
-}
-
-.section-header .more {
-  color: red;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.daily-deals-list {
-  display: flex;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.deal-item {
-  flex-shrink: 0;
-  width: 140px;
-  margin-right: 15px;
-  cursor: pointer;
-}
-
-.deal-image-wrapper {
-  position: relative;
-  margin-bottom: 10px;
-}
-
-.deal-image {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.discount-tag {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  background-color: red;
-  color: #fff;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: bold;
-}
-
-.deal-info {
-  padding: 0 5px;
-}
-
-.deal-name {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.price-section {
-  display: flex;
-  align-items: baseline;
-}
-
-.current-price {
-  font-size: 16px;
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.original-price {
-  font-size: 12px;
-  color: #999;
-  text-decoration: line-through;
-}
-
-/* 分类标签样式 */
+/* 分类表样式 */
 .category-section {
-  padding: 10px;
-  background-color: #fff;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.category-tabs {
-  display: flex;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.category-tab {
-  flex-shrink: 0;
-  padding: 8px 15px;
-  margin-right: 10px;
-  font-size: 14px;
-  color: #333;
-  border-radius: 20px;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.category-tab.active {
-  background-color: red;
-  color: #fff;
-}
-
-/* 商品列表样式 */
-.product-section {
-  padding: 0 10px;
-  margin-bottom: 10px;
-}
-
-.product-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.product-item {
-  width: calc(50% - 5px);
-  margin-bottom: 10px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.product-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.product-image-wrapper {
-  position: relative;
-}
-
-.product-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.sales-tag {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 12px;
-}
-
-.product-info {
-  padding: 10px;
-}
-
-.product-name {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.sales-info {
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
-}
-
-.sales-count {
-  font-size: 12px;
-  color: #999;
+  margin-bottom: 30px;
+  .category-tabs {
+    display: flex;
+    overflow-x: auto;
+    margin-bottom: 15px;
+    button {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      margin-right: 10px;
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      &.active {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 15px rgba(238, 90, 36, 0.3);
+      }
+    }
+  }
+  .category-goods {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    .goods-item {
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      padding: 10px;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+      img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .goods-info {
+        padding: 5px 0;
+        h3 {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .price {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #ff4d4f;
+          font-weight: bold;
+        }
+        .original-price {
+          margin: 5px 0;
+          font-size: 12px;
+          color: #999;
+          text-decoration: line-through;
+        }
+        .sales-volume {
+          margin: 5px 0;
+          font-size: 12px;
+          color: #999;
+        }
+      }
+    }
+  }
 }
 
 /* 我的爆料样式 */
-.submissions-section {
-  padding: 10px;
-  background-color: #fff;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.my-bargain {
+  .my-bargain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #fff;
+      position: relative;
+      padding-left: 15px;
+    }
+    h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, #ff6b6b, #ee5a24);
+      border-radius: 2px;
+    }
+    .btn {
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+  }
+  .my-bargain-list {
+    .bargain-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+      img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 15px;
+      }
+      .bargain-info {
+        flex: 1;
+        h3 {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #333;
+        }
+        .price {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #ff4d4f;
+          font-weight: bold;
+        }
+        .status {
+          margin: 5px 0;
+          font-size: 12px;
+          color: #999;
+        }
+      }
+    }
+  }
+  .empty-bargain {
+    text-align: center;
+    padding: 40px 0;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
 }
 
-.submit-btn {
-  padding: 6px 12px;
-  background-color: red;
-  color: #fff;
-  border: none;
-  border-radius: 15px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.submissions-list {
-  margin-bottom: 10px;
-}
-
-.submission-item {
+/* 商品详情弹窗样式 */
+.goods-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.submission-item:last-child {
-  border-bottom: none;
-}
-
-.submission-image-wrapper {
-  margin-right: 15px;
-}
-
-.submission-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.submission-info {
-  flex: 1;
-}
-
-.submission-name {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.status-section {
-  margin-top: 5px;
-}
-
-.status-tag {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.status-tag.审核中 {
-  background-color: #ffc107;
-  color: #fff;
-}
-
-.status-tag.已通过 {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.status-tag.已拒绝 {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-.empty-submissions {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.empty-icon {
-  width: 60px;
-  height: 60px;
-  background-color: #f5f5f5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-}
-
-.empty-icon i {
-  font-size: 30px;
-  color: #999;
-}
-
-.empty-text {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.empty-desc {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 20px;
-}
-
-.empty-submit-btn {
-  padding: 10px 20px;
-  background-color: red;
-  color: #fff;
-  border: none;
-  border-radius: 25px;
-  font-size: 14px;
-  cursor: pointer;
+  align-items: center;
+  z-index: 1000;
+  .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80%;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+      }
+      button {
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+      }
+    }
+    .modal-body {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+      .goods-detail-info {
+        .price {
+          margin: 5px 0;
+          font-size: 20px;
+          color: #ff4d4f;
+          font-weight: bold;
+        }
+        .original-price {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #999;
+          text-decoration: line-through;
+        }
+        .description {
+          margin: 15px 0;
+          font-size: 14px;
+          color: #333;
+          line-height: 1.5;
+        }
+        .sales-volume {
+          margin: 5px 0;
+          font-size: 12px;
+          color: #999;
+        }
+        .btn {
+          margin-top: 20px;
+          padding: 10px 20px;
+          font-size: 16px;
+          width: 100%;
+        }
+      }
+    }
+  }
 }
 </style>

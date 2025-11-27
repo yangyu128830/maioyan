@@ -28,7 +28,7 @@
 // 导入组件
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-
+import { messageBox } from "@/components/js";
 export default {
   name: "movie",
   components: {
@@ -46,11 +46,32 @@ export default {
         if (this.$store.state.city.id == res.data.data.id) return;
         // 调用messageBox()函数
         // 为了提高体验度，加一个定时器
-
+        setTimeout(() => {
+          messageBox({
+            title: "定位",
+            content: res.data.data.nm,
+            cancel: "取消",
+            ok: "切换定位",
+            // 取消事件暂时不用处理
+            // handleCancel() {
+            //   console.log(1);
+            // },
+            handleOk() {
+              // console.log(2);
+              // 将获取到的数据本地存储
+              window.localStorage.setItem("city_nm", res.data.data.nm);
+              window.localStorage.setItem("city_id", res.data.data.id);
+              // 刷新本页
+              window.location.reload();
+            }
+          });
+        }, 1000);
       }
     }).catch(error => {
       // eslint-disable-next-line no-console
       console.error('获取城市定位失败:', error);
+      // 可以在这里添加错误提示给用户
+      messageBox('提示', '获取城市定位失败，请稍后重试');
     });
   }
 };
