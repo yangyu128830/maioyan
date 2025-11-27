@@ -71,8 +71,6 @@ export default {
           // eslint-disable-next-line no-console
           console.error('搜索电影失败:', error);
           this.isLoading = false;
-          // 可以在这里添加错误提示给用户
-  
         });
       if (newVal === "") {
         this.movieList.length = 0;

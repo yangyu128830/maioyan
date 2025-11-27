@@ -81,8 +81,6 @@ export default {
       }).catch(error => {
       // eslint-disable-next-line no-console
       console.error('获取电影详情失败:', error);
-      // 可以在这里添加错误提示给用户
-      
     });
   },
   methods: {

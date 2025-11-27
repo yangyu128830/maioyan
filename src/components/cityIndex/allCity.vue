@@ -54,8 +54,6 @@ export default {
       // eslint-disable-next-line no-console
       console.error('获取影院列表失败:', error);
       this.isLoading = false;
-      // 可以在这里添加错误提示给用户
-      
     });
   },
   

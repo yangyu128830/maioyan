@@ -1,8 +1,15 @@
-// 会员中心路由配置
-import memberIndex from '../../views/member/index.vue'
+import memberIndex from '@/views/member/index.vue'
+import memberLevel from './level'
 
 export default {
   path: '/member',
   name: 'member',
-  component: memberIndex
+  component: memberIndex,
+  children: [
+    {
+      path: 'level',
+      name: 'memberLevel',
+      component: memberLevel
+    }
+  ]
 }

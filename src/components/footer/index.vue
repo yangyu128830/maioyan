@@ -29,39 +29,50 @@ export default {
 
 <style lang="scss" scoped>
 #footerPage {
-  // height: 60px;
   width: 100%;
   position: fixed;
   bottom: 0;
   left: 0;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #e8e8e8;
   background-color: #fff;
-  z-index: 10;
-  // background-color: pink;
+  z-index: 1000;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  
   ul {
     width: 100%;
+    display: flex;
+    list-style: none;
   }
+  
   ul li {
-    float: left;
-    width: 25%;
-    height: 60px;
+    flex: 1;
+    height: 56px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s ease;
   }
+  
+  ul li:hover {
+    background-color: #fafafa;
+  }
+  
   ul li img {
     display: block;
-    width: 18px;
-    height: 18px;
-    // background-color: red;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 6px;
   }
+  
   ul li p {
-    margin-top: 10px;
-    font-size: 14px;
+    margin: 0;
+    font-size: 12px;
+    transition: color 0.3s ease;
   }
-  .router-link-active{
-    color: red;
+  
+  .router-link-active {
+    color: #ff4d4f;
   }
 }
 </style>

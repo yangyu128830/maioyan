@@ -87,8 +87,6 @@ export default {
       // eslint-disable-next-line no-console
       console.error('获取正在热映电影列表失败:', error);
       this.isLoading = false;
-      // 可以在这里添加错误提示给用户
-      
     });
     // this.$nextTick(() => {
     //   var scroll = new BScroll(this.$refs.wrapper, {
