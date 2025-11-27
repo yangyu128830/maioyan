@@ -1,584 +1,581 @@
 <template>
-  <div id="member">
-    <Header title="会员中心" />
-    <div class="content">
-      <!-- 会员信息卡片 -->
-      <div class="member-card">
-        <div class="member-avatar">
-          <img src="@/assets/personal.png" alt="头像" @click="changeAvatar">
-          <div class="avatar-edit">
-            <i class="iconfont">&#xe63c;</i>
+  <div class="member-container">
+    <!-- 会员头部信息 -->
+    <div class="member-header" :class="memberLevel.toLowerCase()">
+      <div class="member-info">
+        <div class="avatar">
+          <img src="@/assets/personal.png" alt="用户头像">
+        </div>
+        <div class="user-info">
+          <h2 class="username">喵眼用户</h2>
+          <div class="member-level">
+            <span class="level-badge">{{ memberLevel }}</span>
+            <span class="level-desc">{{ levelDescription }}</span>
           </div>
         </div>
-        <div class="member-info">
-          <h2 class="member-name">用户名</h2>
-          <p class="member-id">ID: 123456789</p>
-          <div class="member-level-info">
-            <span class="level-badge">{{ memberLevel.name }}</span>
-            <span class="points-info">积分: {{ currentPoints }}</span>
-          </div>
-          <div class="level-progress">
+      </div>
+      <div class="points-info">
+        <div class="current-points">
+          <span class="points-label">当前积分</span>
+          <span class="points-value">{{ currentPoints }}</span>
+        </div>
+        <div class="next-level">
+          <span class="next-label">距离下一等级</span>
+          <span class="next-need">{{ nextLevelNeed }}分</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 会员等级说明 -->
+    <div class="level-explanation">
+      <h3>会员等级说明</h3>
+      <div class="level-list">
+        <div class="level-item" :class="{ active: memberLevel === '白银' }">
+          <div class="level-icon">🥈</div>
+          <div class="level-details">
+            <h4>白银会员</h4>
+            <p>消费满500分即可升级</p>
             <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: progressWidth + '%' }"></div>
-            </div>
-            <div class="progress-text">
-              <span>距离{{ nextLevel.name }}还需{{ pointsToNextLevel }}分</span>
+              <div class="progress" :style="{ width: getProgress(500) + '%' }"></div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- 会员功能菜单 -->
-      <div class="member-menu">
-        <div class="menu-item" @click="goToOrder">
-          <i class="iconfont menu-icon">&#xe60a;</i>
-          <span class="menu-title">我的订单</span>
-          <i class="iconfont menu-arrow">&#xe65a;</i>
-        </div>
-        <div class="menu-item" @click="goToCoupons">
-          <i class="iconfont menu-icon">&#xe60b;</i>
-          <span class="menu-title">我的优惠券</span>
-          <i class="iconfont menu-arrow">&#xe65a;</i>
-          <span class="menu-badge">3</span>
-        </div>
-        <div class="menu-item" @click="goToPoints">
-          <i class="iconfont menu-icon">&#xe60c;</i>
-          <span class="menu-title">积分商城</span>
-          <i class="iconfont menu-arrow">&#xe65a;</i>
-        </div>
-        <div class="menu-item" @click="goToInvite">
-          <i class="iconfont menu-icon">&#xe60d;</i>
-          <span class="menu-title">邀请好友</span>
-          <i class="iconfont menu-arrow">&#xe65a;</i>
-        </div>
-      </div>
-
-      <!-- 会员福利 -->
-      <div class="benefits-section">
-        <h3 class="section-title">会员福利</h3>
-        <div class="benefits-grid">
-          <div class="benefit-card" v-for="benefit in memberLevel.benefits" :key="benefit.id">
-            <div class="benefit-icon">{{ benefit.icon }}</div>
-            <div class="benefit-content">
-              <h4 class="benefit-title">{{ benefit.title }}</h4>
-              <p class="benefit-desc">{{ benefit.description }}</p>
-              <button v-if="benefit.canClaim && !benefit.claimed" @click="claimBenefit(benefit.id)" class="claim-btn">立即领取</button>
-              <span v-else-if="benefit.claimed" class="claimed-tag">已领取</span>
+        <div class="level-item" :class="{ active: memberLevel === '黄金' }">
+          <div class="level-icon">🥇</div>
+          <div class="level-details">
+            <h4>黄金会员</h4>
+            <p>消费满1000分即可升级</p>
+            <div class="progress-bar">
+              <div class="progress" :style="{ width: getProgress(1000) + '%' }"></div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- 等级规则 -->
-      <div class="level-rules-section">
-        <h3 class="section-title">会员等级规则</h3>
-        <div class="rules-container">
-          <div class="rule-card" v-for="level in levels" :key="level.id" :class="{ active: level.id === memberLevel.id }">
-            <div class="rule-header">
-              <h4 class="level-name">{{ level.name }}</h4>
-              <p class="level-points">{{ level.points }}分</p>
-            </div>
-            <div class="rule-benefits">
-              <ul>
-                <li v-for="benefit in level.benefits" :key="benefit.id" class="benefit-item">
-                  <i class="iconfont benefit-check">&#xe60e;</i>
-                  <span>{{ benefit.title }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 会员特权说明 -->
-      <div class="privileges-section">
-        <h3 class="section-title">会员特权</h3>
-        <div class="privileges-list">
-          <div class="privilege-item">
-            <i class="iconfont privilege-icon">&#xe60f;</i>
-            <div class="privilege-content">
-              <h4>专属客服</h4>
-              <p>24小时在线服务</p>
-            </div>
-          </div>
-          <div class="privilege-item">
-            <i class="iconfont privilege-icon">&#xe610;</i>
-            <div class="privilege-content">
-              <h4>生日福利</h4>
-              <p>生日当月可领取专属礼包</p>
-            </div>
-          </div>
-          <div class="privilege-item">
-            <i class="iconfont privilege-icon">&#xe611;</i>
-            <div class="privilege-content">
-              <h4>积分翻倍</h4>
-              <p>购买电影票享受积分翻倍</p>
+        <div class="level-item" :class="{ active: memberLevel === '黑金' }">
+          <div class="level-icon">💎</div>
+          <div class="level-details">
+            <h4>黑金会员</h4>
+            <p>消费满10000分即可升级</p>
+            <div class="progress-bar">
+              <div class="progress" :style="{ width: getProgress(10000) + '%' }"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <Footer />
+
+    <!-- 会员福利 -->
+    <div class="member-benefits">
+      <h3>本月可领取福利</h3>
+      <div class="benefits-list">
+        <div class="benefit-item" v-for="benefit in availableBenefits" :key="benefit.id">
+          <div class="benefit-icon">{{ benefit.icon }}</div>
+          <div class="benefit-info">
+            <h4>{{ benefit.title }}</h4>
+            <p>{{ benefit.desc }}</p>
+          </div>
+          <button class="claim-btn" :disabled="benefit.claimed" @click="claimBenefit(benefit.id)">
+            {{ benefit.claimed ? '已领取' : '立即领取' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 积分变动记录 -->
+    <div class="points-history">
+      <h3>积分变动记录</h3>
+      <div class="history-list">
+        <div class="history-item" v-for="record in pointsHistory" :key="record.id">
+          <div class="record-info">
+            <span class="record-title">{{ record.title }}</span>
+            <span class="record-date">{{ record.date }}</span>
+          </div>
+          <div class="record-points" :class="record.type">
+            {{ record.type === 'income' ? '+' : '-' }}{{ record.points }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 测试操作区域 -->
+    <div class="test-section">
+      <h3>测试操作</h3>
+      <div class="test-buttons">
+        <button class="test-btn" @click="addPoints(100)">增加100积分</button>
+        <button class="test-btn" @click="addPoints(500)">增加500积分</button>
+        <button class="test-btn" @click="resetPoints">重置积分</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Header from '@/components/header'
-import Footer from '@/components/footer'
-
 export default {
-  name: 'member',
-  components: {
-    Header,
-    Footer
-  },
+  name: 'memberIndex',
   data() {
     return {
-      currentPoints: 800,
-      levels: [
-        {
-          id: 1,
-          name: '白银会员',
-          points: 500,
-          benefits: [
-            { id: 1, icon: '🎁', title: '每月50元代金券', description: '每月可领取50元代金券', canClaim: true, claimed: false },
-            { id: 2, icon: '🎬', title: '专属折扣', description: '购买电影票享受9.5折优惠' }
-          ]
-        },
-        {
-          id: 2,
-          name: '黄金会员',
-          points: 1000,
-          benefits: [
-            { id: 3, icon: '🎁', title: '每月100元代金券', description: '每月可领取100元代金券', canClaim: true, claimed: false },
-            { id: 4, icon: '🎬', title: '专属折扣', description: '购买电影票享受9折优惠' },
-            { id: 5, icon: '🎫', title: '优先购票', description: '热门影片优先购票' }
-          ]
-        },
-        {
-          id: 3,
-          name: '黑金会员',
-          points: 10000,
-          benefits: [
-            { id: 6, icon: '🎬', title: '免费观影', description: '每月可免费观看2次电影', canClaim: true, claimed: false },
-            { id: 7, icon: '🎁', title: '专属大礼包', description: '每月可领取专属大礼包' },
-            { id: 8, icon: '🎫', title: '专属通道', description: '影院专属通道入场' },
-            { id: 9, icon: '⭐', title: '专属客服', description: '24小时专属客服' }
-          ]
-        }
+      currentPoints: 350, // 当前积分
+      claimedBenefits: [], // 已领取的福利ID
+      pointsHistory: [
+        { id: 1, title: '购买电影票', date: '2024-01-15', points: 80, type: 'income' },
+        { id: 2, title: '购买电影票', date: '2024-01-10', points: 65, type: 'income' },
+        { id: 3, title: '领取代金券', date: '2024-01-05', points: 50, type: 'expense' }
       ]
     }
   },
   computed: {
+    // 计算会员等级
     memberLevel() {
       if (this.currentPoints >= 10000) {
-        return this.levels[2]
+        return '黑金'
       } else if (this.currentPoints >= 1000) {
-        return this.levels[1]
+        return '黄金'
       } else if (this.currentPoints >= 500) {
-        return this.levels[0]
+        return '白银'
       } else {
-        return { name: '普通用户', benefits: [] }
+        return '普通'
       }
     },
-    nextLevel() {
+    // 等级描述
+    levelDescription() {
+      const descriptions = {
+        '普通': '加油消费，升级会员享更多福利',
+        '白银': '每月可领取50元代金券',
+        '黄金': '每月可领取100元代金券',
+        '黑金': '每月可免费看电影2次'
+      }
+      return descriptions[this.memberLevel]
+    },
+    // 下一等级需要的积分
+    nextLevelNeed() {
       if (this.currentPoints < 500) {
-        return this.levels[0]
+        return 500 - this.currentPoints
       } else if (this.currentPoints < 1000) {
-        return this.levels[1]
+        return 1000 - this.currentPoints
       } else if (this.currentPoints < 10000) {
-        return this.levels[2]
-      } else {
-        return { name: '最高等级', points: this.currentPoints }
-      }
-    },
-    pointsToNextLevel() {
-      if (this.nextLevel && this.nextLevel.points > this.currentPoints) {
-        return this.nextLevel.points - this.currentPoints
+        return 10000 - this.currentPoints
       } else {
         return 0
       }
     },
-    progressWidth() {
-      if (this.nextLevel && this.nextLevel.points > this.currentPoints) {
-        const currentLevelPoints = this.memberLevel.points || 0
-        const progress = (this.currentPoints - currentLevelPoints) / (this.nextLevel.points - currentLevelPoints) * 100
-        return Math.max(0, Math.min(100, progress))
-      } else {
-        return 100
+    // 可用福利
+    availableBenefits() {
+      const benefits = []
+      
+      if (this.memberLevel === '白银' || this.memberLevel === '黄金' || this.memberLevel === '黑金') {
+        benefits.push({
+          id: 1,
+          icon: '🎫',
+          title: '50元代金券',
+          desc: '满100元可用',
+          claimed: this.claimedBenefits.includes(1)
+        })
       }
+      
+      if (this.memberLevel === '黄金' || this.memberLevel === '黑金') {
+        benefits.push({
+          id: 2,
+          icon: '🎟️',
+          title: '100元代金券',
+          desc: '满200元可用',
+          claimed: this.claimedBenefits.includes(2)
+        })
+      }
+      
+      if (this.memberLevel === '黑金') {
+        benefits.push({
+          id: 3,
+          icon: '🎬',
+          title: '免费观影券',
+          desc: '每月2次免费观影机会',
+          claimed: this.claimedBenefits.includes(3)
+        })
+      }
+      
+      return benefits
     }
   },
   methods: {
-    changeAvatar() {
-      this.$messageBox({ title: '提示', content: '头像修改功能暂未开放', ok: '确定' })
-    },
-    goToOrder() {
-      this.$router.push('/member/orders')
-    },
-    goToCoupons() {
-      this.$router.push('/member/coupons')
-    },
-    goToPoints() {
-      this.$router.push('/member/points')
-    },
-    goToInvite() {
-      this.$messageBox({ title: '提示', content: '邀请好友功能暂未开放', ok: '确定' })
-    },
-    claimBenefit(benefitId) {
-      const benefit = this.memberLevel.benefits.find(b => b.id === benefitId)
-      if (benefit) {
-        benefit.claimed = true
-        this.$messageBox({ title: '提示', content: '福利领取成功！', ok: '确定' })
+    // 获取等级进度
+    getProgress(levelPoints) {
+      if (this.currentPoints >= levelPoints) {
+        return 100
       }
+      return (this.currentPoints / levelPoints) * 100
+    },
+    // 领取福利
+    claimBenefit(benefitId) {
+      if (!this.claimedBenefits.includes(benefitId)) {
+        this.claimedBenefits.push(benefitId)
+        // 添加积分变动记录
+        this.pointsHistory.unshift({
+          id: Date.now(),
+          title: '领取福利',
+          date: new Date().toISOString().split('T')[0],
+          points: benefitId === 1 ? 50 : benefitId === 2 ? 100 : 0,
+          type: 'expense'
+        })
+      }
+    },
+    // 增加积分
+    addPoints(points) {
+      this.currentPoints += points
+      // 添加积分变动记录
+      this.pointsHistory.unshift({
+        id: Date.now(),
+        title: '测试增加积分',
+        date: new Date().toISOString().split('T')[0],
+        points: points,
+        type: 'income'
+      })
+    },
+    // 重置积分
+    resetPoints() {
+      this.currentPoints = 350
+      this.claimedBenefits = []
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#member {
-  .content {
-    margin-top: 40px;
-    padding-bottom: 60px;
-    background-color: #f5f5f5;
-    min-height: calc(100vh - 100px);
+.member-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 70px;
+}
+
+/* 会员头部样式 */
+.member-header {
+  padding: 20px;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  &.silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
   }
-
-  /* 会员卡片 */
-  .member-card {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-    color: white;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-    .member-avatar {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 20px;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .avatar-edit {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-      }
-    }
-
-    .member-info {
-      flex: 1;
-
-      .member-name {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 8px;
-      }
-
-      .member-id {
-        font-size: 14px;
-        opacity: 0.9;
-        margin-bottom: 12px;
-      }
-
-      .member-level-info {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-
-        .level-badge {
-          background-color: rgba(255, 255, 255, 0.3);
-          padding: 4px 12px;
-          border-radius: 12px;
-          font-size: 14px;
-          margin-right: 12px;
-        }
-
-        .points-info {
-          font-size: 14px;
-        }
-      }
-
-      .level-progress {
-        width: 100%;
-
-        .progress-bar {
-          width: 100%;
-          height: 8px;
-          background-color: rgba(255, 255, 255, 0.3);
-          border-radius: 4px;
-          overflow: hidden;
-          margin-bottom: 6px;
-
-          .progress-fill {
-            height: 100%;
-            background-color: white;
-            transition: width 0.3s ease;
-          }
-        }
-
-        .progress-text {
-          font-size: 12px;
-          opacity: 0.9;
-        }
-      }
-    }
+  
+  &.gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333;
   }
-
-  /* 会员菜单 */
-  .member-menu {
-    background-color: white;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    .menu-item {
-      display: flex;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid #f0f0f0;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      &:active {
-        background-color: #f5f5f5;
-      }
-
-      .menu-icon {
-        font-size: 24px;
-        color: #ff6b6b;
-        margin-right: 16px;
-      }
-
-      .menu-title {
-        flex: 1;
-        font-size: 16px;
-        color: #333;
-      }
-
-      .menu-arrow {
-        font-size: 16px;
-        color: #999;
-      }
-
-      .menu-badge {
-        background-color: #ff4d4f;
-        color: white;
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 12px;
-        margin-left: 8px;
-      }
-    }
+  
+  &.blackgold {
+    background: linear-gradient(135deg, #2c2c2c 0%, #000000 100%);
   }
+}
 
-  /* 通用区块样式 */
-  .benefits-section,
-  .level-rules-section,
-  .privileges-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.member-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #ff6b6b;
-    }
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 15px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+}
 
-  /* 福利网格 */
-  .benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
+.user-info {
+  flex: 1;
+}
 
-    .benefit-card {
-      background-color: #fafafa;
-      border-radius: 8px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      border: 1px solid #e0e0e0;
-      transition: all 0.3s ease;
+.username {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
+.member-level {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-      .benefit-icon {
-        font-size: 36px;
-        margin-bottom: 12px;
-      }
+.level-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  font-weight: bold;
+}
 
-      .benefit-content {
-        flex: 1;
+.level-desc {
+  font-size: 12px;
+  opacity: 0.9;
+}
 
-        .benefit-title {
-          font-size: 16px;
-          font-weight: bold;
-          color: #333;
-          margin-bottom: 8px;
-        }
+.points-info {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-        .benefit-desc {
-          font-size: 14px;
-          color: #666;
-          margin-bottom: 12px;
-          line-height: 1.4;
-        }
+.current-points,
+.next-level {
+  text-align: center;
+}
 
-        .claim-btn {
-          background-color: #ff6b6b;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          padding: 6px 12px;
-          font-size: 14px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
+.points-label,
+.next-label {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
 
-          &:active {
-            background-color: #ee5a24;
-          }
-        }
+.points-value,
+.next-need {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+}
 
-        .claimed-tag {
-          font-size: 14px;
-          color: #999;
-        }
-      }
-    }
+/* 等级说明样式 */
+.level-explanation {
+  margin: 20px 15px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.level-explanation h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.level-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.level-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background-color: #e8f4fd;
+    border: 2px solid #409eff;
   }
+}
 
-  /* 等级规则 */
-  .rules-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.level-icon {
+  font-size: 24px;
+  margin-right: 15px;
+}
 
-    .rule-card {
-      padding: 16px;
-      border-radius: 8px;
-      border: 2px solid #e0e0e0;
-      transition: all 0.3s ease;
+.level-details {
+  flex: 1;
+}
 
-      &.active {
-        border-color: #ff6b6b;
-        background-color: rgba(255, 107, 107, 0.05);
-        transform: scale(1.02);
-      }
+.level-details h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #333;
+}
 
-      .rule-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
+.level-details p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: #666;
+}
 
-        .level-name {
-          font-size: 16px;
-          font-weight: bold;
-          color: #333;
-        }
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
 
-        .level-points {
-          font-size: 14px;
-          color: #666;
-        }
-      }
+.progress {
+  height: 100%;
+  background-color: #409eff;
+  transition: width 0.3s ease;
+}
 
-      .rule-benefits {
-        ul {
-          list-style: none;
+/* 会员福利样式 */
+.member-benefits {
+  margin: 20px 15px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-          .benefit-item {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 6px;
+.member-benefits h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
 
-            .benefit-check {
-              font-size: 16px;
-              color: #52c41a;
-              margin-right: 8px;
-            }
-          }
-        }
-      }
-    }
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.benefit-icon {
+  font-size: 28px;
+  margin-right: 15px;
+}
+
+.benefit-info {
+  flex: 1;
+}
+
+.benefit-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.benefit-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.claim-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #409eff;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
+  
+  &:not(:disabled):hover {
+    background-color: #66b1ff;
+  }
+}
 
-  /* 特权列表 */
-  .privileges-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* 积分记录样式 */
+.points-history {
+  margin: 20px 15px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-    .privilege-item {
-      display: flex;
-      align-items: center;
-      padding: 16px;
-      background-color: #fafafa;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
+.points-history h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
 
-      .privilege-icon {
-        font-size: 28px;
-        color: #ff6b6b;
-        margin-right: 16px;
-      }
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-      .privilege-content {
-        flex: 1;
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
 
-        h4 {
-          font-size: 16px;
-          font-weight: bold;
-          color: #333;
-          margin-bottom: 4px;
-        }
+.record-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 
-        p {
-          font-size: 14px;
-          color: #666;
-        }
-      }
-    }
+.record-title {
+  font-size: 14px;
+  color: #333;
+}
+
+.record-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.record-points {
+  font-size: 14px;
+  font-weight: bold;
+  
+  &.income {
+    color: #67c23a;
+  }
+  
+  &.expense {
+    color: #f56c6c;
+  }
+}
+
+/* 测试区域样式 */
+.test-section {
+  margin: 20px 15px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.test-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.test-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.test-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #409eff;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: #66b1ff;
   }
 }
 </style>

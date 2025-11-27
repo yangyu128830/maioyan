@@ -55,7 +55,7 @@ export default {
       console.error('获取影院列表失败:', error);
       this.isLoading = false;
       // 可以在这里添加错误提示给用户
-      this.$messageBox('提示', '获取影院列表失败，请稍后重试');
+      
     });
   },
   

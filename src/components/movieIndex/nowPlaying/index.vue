@@ -88,7 +88,7 @@ export default {
       console.error('获取正在热映电影列表失败:', error);
       this.isLoading = false;
       // 可以在这里添加错误提示给用户
-      this.$messageBox('提示', '获取电影列表失败，请稍后重试');
+      
     });
     // this.$nextTick(() => {
     //   var scroll = new BScroll(this.$refs.wrapper, {
