@@ -9,6 +9,10 @@
           <img src="@/assets/CityHall.png" alt>
           <p>喵眼城市</p>
       </router-link>
+      <router-link tag="li" to="/bargain">
+        <img src="@/assets/max.png" alt>
+        <p>特价</p>
+      </router-link>
       <router-link tag="li" to="/member">
         <img src="@/assets/message.png" alt>
         <p>会员中心</p>
@@ -29,50 +33,39 @@ export default {
 
 <style lang="scss" scoped>
 #footerPage {
+  // height: 60px;
   width: 100%;
   position: fixed;
   bottom: 0;
   left: 0;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid #ddd;
   background-color: #fff;
-  z-index: 1000;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-  
+  z-index: 10;
+  // background-color: pink;
   ul {
     width: 100%;
-    display: flex;
-    list-style: none;
   }
-  
   ul li {
-    flex: 1;
-    height: 56px;
+    float: left;
+    width: 20%;
+    height: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease;
   }
-  
-  ul li:hover {
-    background-color: #fafafa;
-  }
-  
   ul li img {
     display: block;
-    width: 20px;
-    height: 20px;
-    margin-bottom: 6px;
+    width: 18px;
+    height: 18px;
+    // background-color: red;
   }
-  
   ul li p {
-    margin: 0;
-    font-size: 12px;
-    transition: color 0.3s ease;
+    margin-top: 10px;
+    font-size: 14px;
   }
-  
-  .router-link-active {
-    color: #ff4d4f;
+  .router-link-active{
+    color: red;
   }
 }
 </style>
