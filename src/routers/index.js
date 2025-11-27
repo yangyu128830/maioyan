@@ -5,8 +5,6 @@ import movieRouter from '../routers/movie'
 import cityRouter from '../routers/city'
 import personRouter from '../routers/person'
 import memberRouter from '../routers/member'
-import bargainRouter from '../routers/bargain'
-import showRouter from '../routers/show'
 Vue.use(Router)
 
 export default new Router({
@@ -20,8 +18,6 @@ export default new Router({
    movieRouter,
    cityRouter,
    personRouter,
-   memberRouter,
-   bargainRouter,
-   showRouter
+   memberRouter
   ]
 })
